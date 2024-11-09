@@ -29,7 +29,7 @@ const compileSass = () => {
   });
 };
 
-// Copy all files from the themes folder to the dist folder
+// Copy all files from the themes folder to the dist folder (handle .sass separately if needed)
 const copyFiles = () => {
   const themesDir = path.join(__dirname, 'themes');
   
@@ -42,8 +42,15 @@ const copyFiles = () => {
     if (fs.existsSync(source)) {
       if (fs.lstatSync(source).isDirectory()) {
         execSync(`cp -r ${source} ${destination}`); // Copy directories
+      } else if (file.endsWith('.scss')) {
+        // Only copy .scss files that are compiled
+        fs.copyFileSync(source, destination);
+      } else if (file.endsWith('.sass')) {
+        // Handle .sass files if needed, e.g., ignore them or do something else
+        console.log(`Skipping .sass file: ${file}`);
       } else {
-        fs.copyFileSync(source, destination); // Copy files
+        // Copy other files as-is
+        fs.copyFileSync(source, destination);
       }
     }
   });
