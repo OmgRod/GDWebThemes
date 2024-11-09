@@ -5,6 +5,15 @@ const cleanCSS = require('clean-css');
 const ghPages = require('gh-pages');
 const { execSync } = require('child_process');
 
+// Ensure the dist folder exists
+const createDistFolder = () => {
+  const distDir = path.join(__dirname, 'dist');
+  if (!fs.existsSync(distDir)) {
+    fs.mkdirSync(distDir, { recursive: true });
+    console.log('Created dist directory');
+  }
+};
+
 // Compile SCSS files from the ./themes directory
 const compileSass = () => {
   console.log('Compiling SCSS...');
@@ -60,7 +69,7 @@ const copyFiles = () => {
 const deployToGitHubPages = () => {
   ghPages.publish('dist', {
     branch: 'gh-pages',
-    repo: 'https://github.com/OmgRod/GDWebThemes.git', // Replace with your repo URL
+    repo: 'https://github.com/OmgRod/GDWebThemes.git', // Use the correct repo URL
     user: {
       name: 'GitHub Actions', // Your GitHub username
       email: 'your-email@example.com', // Your email
@@ -77,6 +86,7 @@ const deployToGitHubPages = () => {
 // Run the build process
 const build = () => {
   console.log('Building...');
+  createDistFolder();  // Ensure dist folder exists
   compileSass();
   copyFiles();
   deployToGitHubPages();
